@@ -42,6 +42,7 @@ def unpack(archive_filename, bsp_package_path, package_info, package_name):
 
     return True
 
+
 def handle_tar_package(archive_filename, bsp_package_path, package_name, package_info):
     package_version = package_info['ver']
     package_temp_path = os.path.join(bsp_package_path, "package_temp")
@@ -80,8 +81,9 @@ def handle_tar_package(archive_filename, bsp_package_path, package_name, package
                 pkgsdb.save_to_database(right_name_to_db, archive_filename, right_path)
         arch.close()
 
-        if not move_package_to_bsp_packages(package_folder_name, package_name, package_temp_path, package_version,
-                                            bsp_package_path):
+        if not move_package_to_bsp_packages(
+            package_folder_name, package_name, package_temp_path, package_version, bsp_package_path
+        ):
             return False
 
     except Exception as e:
@@ -91,8 +93,9 @@ def handle_tar_package(archive_filename, bsp_package_path, package_name, package
         remove_folder(package_temp_path)
         os.remove(archive_filename)
         return False
-    
+
     return True
+
 
 def handle_zip_package(archive_filename, bsp_package_path, package_name, package_info):
     package_version = package_info['ver']
@@ -131,8 +134,9 @@ def handle_zip_package(archive_filename, bsp_package_path, package_name, package
                 pkgsdb.save_to_database(right_name_to_db, archive_filename, right_path)
         arch.close()
 
-        if not move_package_to_bsp_packages(package_folder_name, package_name, package_temp_path, package_version,
-                                            bsp_package_path):
+        if not move_package_to_bsp_packages(
+            package_folder_name, package_name, package_temp_path, package_version, bsp_package_path
+        ):
             return False
     except Exception as e:
         logging.warning('unpack error message : {0}'.format(e))
@@ -145,8 +149,7 @@ def handle_zip_package(archive_filename, bsp_package_path, package_name, package
     return True
 
 
-def move_package_to_bsp_packages(package_folder_name, package_name, package_temp_path, package_version,
-                                 bsp_packages_path):
+def move_package_to_bsp_packages(package_folder_name, package_name, package_temp_path, package_version, bsp_packages_path):
     """move package in temp folder to bsp packages folder."""
     origin_package_folder_path = os.path.join(package_temp_path, package_folder_name)
     package_name_with_version = package_name + '-' + package_version

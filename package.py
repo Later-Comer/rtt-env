@@ -130,7 +130,9 @@ group = DefineGroup('${name}', src, depend = [''], CPPPATH = CPPPATH)
 Return('group')
 '''
 
-import codecs 
+import codecs
+
+
 class PackageOperation:
     pkg = None
 
@@ -199,10 +201,7 @@ class PackageOperation:
 
         retry_count = 0
 
-        headers = {'Connection': 'keep-alive',
-                   'Accept-Encoding': 'gzip, deflate',
-                   'Accept': '*/*',
-                   'User-Agent': 'curl/7.54.0'}
+        headers = {'Connection': 'keep-alive', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'User-Agent': 'curl/7.54.0'}
 
         print('Start to download package : %s ' % filename.encode("utf-8"))
 
@@ -233,8 +232,7 @@ class PackageOperation:
                     if os.path.isfile(path):
                         os.remove(path)
                     if retry_count > 5:
-                        print(
-                            "error: Have tried downloading 5 times.\nstop Downloading file :%s" % path)
+                        print("error: Have tried downloading 5 times.\nstop Downloading file :%s" % path)
                         if os.path.isfile(path):
                             os.remove(path)
                         ret = False
@@ -249,5 +247,3 @@ class PackageOperation:
                         os.remove(path)
                     return False
         return ret
-
-
