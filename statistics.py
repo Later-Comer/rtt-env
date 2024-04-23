@@ -24,37 +24,36 @@
 #
 import os
 import uuid
-
 import requests
-
 from vars import Import
-
-from cmds import *
+from cmds.cmd_package.cmd_package_utils import find_bool_macro_in_config
 
 
 def get_mac_address():
-    mac=uuid.UUID(int = uuid.getnode()).hex[-12:]
-    return ":".join([mac[e:e+2] for e in range(0,11,2)])
+    mac = uuid.UUID(int=uuid.getnode()).hex[-12:]
+    return ":".join([mac[e : e + 2] for e in range(0, 11, 2)])
 
 
-def Information_statistics():
-    # get the .config file from env
-    env_kconfig_path = os.path.join(os.getcwd(), 'tools', 'scripts', 'cmds')
-    env_config_file = os.path.join(env_kconfig_path, '.config')
+def Information_statistics(env_config_file):
 
     mac_addr = get_mac_address()
-    env_config_file = os.path.join(env_kconfig_path, '.config')
 
     if not os.path.isfile(env_config_file):
         try:
-            response = requests.get('https://www.rt-thread.org/studio/statistics/api/envuse?userid='+str(mac_addr)+'&username='+str(mac_addr)+'&envversion=1.0&studioversion=2.0&ip=127.0.0.1')
+            response = requests.get(
+                "https://www.rt-thread.org/studio/statistics/api/envuse?userid="
+                + str(mac_addr)
+                + "&username="
+                + str(mac_addr)
+                + "&envversion=1.0&studioversion=2.0&ip=127.0.0.1"
+            )
             if response.status_code != 200:
                 return
         except Exception as e:
             exit(0)
-    elif os.path.isfile(env_config_file) and cmd_package.find_bool_macro_in_config(env_config_file, 'SYS_PKGS_NOT_USING_STATISTICS'):
-        return True
+    elif os.path.isfile(env_config_file) and find_bool_macro_in_config(env_config_file, "SYS_PKGS_NOT_USING_STATISTICS"):
+        return
 
 
-if __name__ == '__main__':
-    Information_statistics()
+if __name__ == "__main__":
+    Information_statistics(os.path.join(os.getenv("ENV_ROOT"), ".config"))

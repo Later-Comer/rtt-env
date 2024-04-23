@@ -35,7 +35,7 @@ from tqdm import tqdm
 
 """Template for creating a new file"""
 
-Bridge_SConscript = '''import os
+Bridge_SConscript = """import os
 from building import *
 
 objs = []
@@ -47,9 +47,9 @@ for item in list:
         objs = objs + SConscript(os.path.join(item, 'SConscript'))
 
 Return('objs')
-'''
+"""
 
-Kconfig_file = '''
+Kconfig_file = """
 # Kconfig file for package ${lowercase_name}
 menuconfig PKG_USING_${name}
     bool "${description}"
@@ -80,9 +80,9 @@ if PKG_USING_${name}
 
 endif
 
-'''
+"""
 
-Package_json_file = '''{
+Package_json_file = """{
   "name": "${name}",
   "description": "${description}",
   "description_zh": "${description_zh}",
@@ -115,50 +115,50 @@ Package_json_file = '''{
     }
   ]
 }
-'''
+"""
 
 import codecs 
 class PackageOperation:
     pkg = None
 
     def parse(self, filename):
-        with codecs.open(filename, "r", encoding='utf-8') as f:
+        with codecs.open(filename, "r", encoding="utf-8") as f:
             json_str = f.read()
 
         if json_str:
             self.pkg = json.loads(json_str)
 
     def get_name(self):
-        return self.pkg['name']
+        return self.pkg["name"]
 
     def get_filename(self, ver):
-        for item in self.pkg['site']:
-            if item['version'].lower() == ver.lower():
-                return item['filename']
+        for item in self.pkg["site"]:
+            if item["version"].lower() == ver.lower():
+                return item["filename"]
 
         return None
 
     def get_url(self, ver):
         url = None
-        for item in self.pkg['site']:
-            if item['version'].lower() == ver.lower():
-                url = item['URL']
+        for item in self.pkg["site"]:
+            if item["version"].lower() == ver.lower():
+                url = item["URL"]
 
         if not url:
-            logging.warning("Can't find right url {0}, please check {1}".format(ver.lower(), self.pkg['site']))
+            logging.warning("Can't find right url {0}, please check {1}".format(ver.lower(), self.pkg["site"]))
 
         return url
 
     def get_versha(self, ver):
-        for item in self.pkg['site']:
-            if item['version'].lower() == ver.lower():
-                return item['VER_SHA']
+        for item in self.pkg["site"]:
+            if item["version"].lower() == ver.lower():
+                return item["VER_SHA"]
 
         return None
 
     def get_site(self, ver):
-        for item in self.pkg['site']:
-            if item['version'].lower() == ver.lower():
+        for item in self.pkg["site"]:
+            if item["version"].lower() == ver.lower():
                 return item
 
         return None
@@ -167,8 +167,12 @@ class PackageOperation:
         ret = True
         url = self.get_url(ver)
         site = self.get_site(ver)
-        if site and 'filename' in site:
-            filename = site['filename']
+
+        if not os.path.isdir(path):
+            os.makedirs(path, exist_ok=True)
+
+        if site and "filename" in site:
+            filename = site["filename"]
             path = os.path.join(path, filename)
         else:
             basename = os.path.basename(url)
@@ -179,6 +183,7 @@ class PackageOperation:
                 os.remove(path)
             else:
                 if archive.package_integrity_test(path):
+                    print("found %s" % path)
                     return True
                 else:
                     os.remove(path)
@@ -220,10 +225,10 @@ class PackageOperation:
                         break
             except Exception as e:
                 print(url_from_srv)
-                print('error message:%s\t' % e)
+                print("error message:%s\t" % e)
                 retry_count = retry_count + 1
                 if retry_count > 5:
-                    print('%s download fail!\n' % path.encode("utf-8"))
+                    print("%s download fail!\n" % path.encode("utf-8"))
                     if os.path.isfile(path):
                         os.remove(path)
                     return False

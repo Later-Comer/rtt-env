@@ -34,13 +34,13 @@ import requests
 import logging
 from vars import Import
 
+
 def execute_command(cmd_string, cwd=None, shell=True):
     """Execute the system command at the specified address."""
 
-    sub = subprocess.Popen(cmd_string, cwd=cwd, stdin=subprocess.PIPE,
-                           stdout=subprocess.PIPE, shell=shell, bufsize=4096)
+    sub = subprocess.Popen(cmd_string, cwd=cwd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, shell=shell, bufsize=4096)
 
-    stdout_str = ''
+    stdout_str = ""
     while sub.poll() is None:
         stdout_str += str(sub.stdout.read())
         time.sleep(0.1)
@@ -55,15 +55,15 @@ def is_windows():
         return False
 
 
-def git_pull_repo(repo_path, repo_url=''):
+def git_pull_repo(repo_path, repo_url=""):
     try:
         if is_windows():
-            cmd = r'git config --local core.autocrlf true'
+            cmd = r"git config --local core.autocrlf true"
             execute_command(cmd, cwd=repo_path)
-        cmd = r'git pull ' + repo_url
+        cmd = r"git pull " + repo_url
         execute_command(cmd, cwd=repo_path)
     except Exception as e:
-        print('Error message:%s' % e)
+        print("Error message:%s" % e)
 
 
 def get_url_from_mirror_server(package_name, package_version):
@@ -74,9 +74,9 @@ def get_url_from_mirror_server(package_name, package_version):
             if sys.version_info < (3, 0):
                 package_name = str(package_name)
             else:
-                package_name = str(package_name, encoding='utf-8')
+                package_name = str(package_name, encoding="utf-8")
     except Exception as e:
-        print('Error message:%s' % e)
+        print("Error message:%s" % e)
         print("\nThe mirror server could not be contacted. Please check your network connection.")
         return None, None
 
@@ -86,9 +86,9 @@ def get_url_from_mirror_server(package_name, package_version):
             {
                 "name": "NULL",
             }
-        ]
+        ],
     }
-    payload["packages"][0]['name'] = package_name
+    payload["packages"][0]["name"] = package_name
 
     try:
         r = requests.post("https://api.rt-thread.org/packages/queries", data=json.dumps(payload))
@@ -98,17 +98,17 @@ def get_url_from_mirror_server(package_name, package_version):
 
             # Can't find package,change git package SHA if it's a git
             # package
-            if len(package_info['packages']) == 0:
+            if len(package_info["packages"]) == 0:
                 print("Package was NOT found on mirror server. Using a non-mirrored address to download.")
                 return None, None
             else:
-                for item in package_info['packages'][0]['packages_info']['site']:
-                    if item['version'] == package_version:
+                for item in package_info["packages"][0]["packages_info"]["site"]:
+                    if item["version"] == package_version:
                         # Change download url
-                        download_url = item['URL']
-                        if download_url[-4:] == '.git':
+                        download_url = item["URL"]
+                        if download_url[-4:] == ".git":
                             # Change git package SHA
-                            repo_sha = item['VER_SHA']
+                            repo_sha = item["VER_SHA"]
                             return download_url, repo_sha
                         return download_url, None
 
@@ -117,7 +117,7 @@ def get_url_from_mirror_server(package_name, package_version):
             return None, None
 
     except Exception as e:
-        print('Error message:%s' % e)
+        print("Error message:%s" % e)
         print("\nThe mirror server could not be contacted. Please check your network connection.")
         return None, None
 
@@ -147,19 +147,19 @@ def find_string_in_config(filename, macro_name):
     try:
         config = open(filename, "r")
     except Exception as e:
-        print('Error message:%s' % e)
-        print('open .config failed')
+        print("Error message:%s" % e)
+        print("open .config failed")
         return (False, None)
 
     empty_line = 1
 
     for line in config:
-        line = line.lstrip(' ').replace('\n', '').replace('\r', '')
+        line = line.lstrip(" ").replace("\n", "").replace("\r", "")
 
         if len(line) == 0:
             continue
 
-        if line[0] == '#':
+        if line[0] == "#":
             if len(line) == 1:
                 if empty_line:
                     continue
@@ -168,8 +168,8 @@ def find_string_in_config(filename, macro_name):
                 continue
 
             # comment_line = line[1:]
-            if line.startswith('# CONFIG_'):
-                line = ' ' + line[9:]
+            if line.startswith("# CONFIG_"):
+                line = " " + line[9:]
             else:
                 line = line[1:]
 
@@ -178,9 +178,9 @@ def find_string_in_config(filename, macro_name):
             empty_line = 0
         else:
             empty_line = 0
-            setting = line.split('=')
+            setting = line.split("=")
             if len(setting) >= 2:
-                if setting[0].startswith('CONFIG_'):
+                if setting[0].startswith("CONFIG_"):
                     setting[0] = setting[0][7:]
 
                     if setting[0] == macro_name:
@@ -195,10 +195,10 @@ def find_string_in_config(filename, macro_name):
 # e.g CONFIG_SYS_AUTO_UPDATE_PKGS=y
 # will return True because this macro has been set
 # If this macro cannot find or the .config cannot find or the macro is not set (n),
-# the function will return False  
+# the function will return False
 def find_bool_macro_in_config(filename, macro_name):
     rst, str = find_string_in_config(filename, macro_name)
-    if rst == True and str == 'y':
+    if rst == True and str == "y":
         return True
     else:
         return False
@@ -218,31 +218,11 @@ def find_string_macro_in_config(filename, macro_name):
         return None
 
 
-# return IAR execution path string or None for failure
-def find_IAR_EXEC_PATH():
-    env_root = Import('env_root')
-    # get the .config file from env
-    env_kconfig_path = os.path.join(env_root, 'tools', 'scripts', 'cmds')
-    env_config_file = os.path.join(env_kconfig_path, '.config')
-
-    return find_string_macro_in_config(env_config_file, 'SYS_CREATE_IAR_EXEC_PATH')
-
-
-# return Keil-MDK execution path string or None for failure
-def find_MDK_EXEC_PATH():
-    env_root = Import('env_root')
-    # get the .config file from env
-    env_kconfig_path = os.path.join(env_root, 'tools', 'scripts', 'cmds')
-    env_config_file = os.path.join(env_kconfig_path, '.config')
-
-    return find_string_macro_in_config(env_config_file, 'SYS_CREATE_MDK_EXEC_PATH')
-
-
 def remove_folder(folder_path):
     try:
         if os.path.isdir(folder_path):
             if is_windows():
-                cmd = 'rd /s /q ' + folder_path
+                cmd = "rd /s /q " + folder_path
                 os.system(cmd)
             else:
                 shutil.rmtree(folder_path)
@@ -250,5 +230,5 @@ def remove_folder(folder_path):
         else:
             return True
     except Exception as e:
-        logging.warning('Error message : {0}'.format(e))
+        logging.warning("Error message : {0}".format(e))
         return False

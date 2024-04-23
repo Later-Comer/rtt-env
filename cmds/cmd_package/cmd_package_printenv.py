@@ -29,19 +29,15 @@ import platform
 
 def package_print_env():
     print("Here are some environmental variables.")
-    print("If you meet some problems,please check them. Make sure the configuration is correct.")
+    print(
+        "If you meet some problems,please check them. Make sure the configuration is correct."
+    )
     print("RTT_EXEC_PATH:%s" % (os.getenv("RTT_EXEC_PATH")))
     print("RTT_CC:%s" % (os.getenv("RTT_CC")))
     print("SCONS:%s" % (os.getenv("SCONS")))
+    print("ENV_ROOT:%s" % (os.getenv("ENV_ROOT")))
     print("PKGS_ROOT:%s" % (os.getenv("PKGS_ROOT")))
-
-    env_root = os.getenv('ENV_ROOT')
-    if env_root is None:
-        if platform.system() != 'Windows':
-            env_root = os.path.join(os.getenv('HOME'), '.env')
-
-    print("ENV_ROOT:%s" % env_root)
 
 
 def package_print_help():
-    os.system('env pkg -h')
+    os.system("env pkg -h")
