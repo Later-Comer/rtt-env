@@ -61,7 +61,12 @@ def run_env_cmd(args):
 def add_parser(sub):
     """The packages command parser for env."""
 
-    parser = sub.add_parser('pkg', aliases=['pkgs', 'package'], help=__doc__, description=__doc__)
+    parser = sub.add_parser(
+        'pkg',
+        aliases=['pkgs', 'package'],
+        help=__doc__,
+        description=__doc__,
+    )
 
     parser.add_argument(
         '--update',
@@ -80,10 +85,20 @@ def add_parser(sub):
         dest='package_update_force',
     )
 
-    parser.add_argument('--list', help='list target packages', action='store_true', default=False, dest='list_packages')
+    parser.add_argument(
+        '--list',
+        help='list target packages',
+        action='store_true',
+        default=False,
+        dest='list_packages',
+    )
 
     parser.add_argument(
-        '--wizard', help='create a new package with wizard', action='store_true', default=False, dest='package_create'
+        '--wizard',
+        help='create a new package with wizard',
+        action='store_true',
+        default=False,
+        dest='package_create',
     )
 
     parser.add_argument(

@@ -186,7 +186,9 @@ def cmd(args):
         if platform.system() == "Windows":
             os.system('chcp 65001  > nul')
 
-        print("\n\033[1;31;40m<menuconfig> 命令应当在某一特定 BSP 目录下执行，例如：\"rt-thread/bsp/stm32/stm32f091-st-nucleo\"\033[0m")
+        print(
+            "\n\033[1;31;40m<menuconfig> 命令应当在某一特定 BSP 目录下执行，例如：\"rt-thread/bsp/stm32/stm32f091-st-nucleo\"\033[0m"
+        )
         print("\033[1;31;40m请确保当前目录为 BSP 根目录，并且该目录中有 Kconfig 文件。\033[0m\n")
 
         print("<menuconfig> command should be used in a bsp root path with a Kconfig file.")
@@ -287,10 +289,18 @@ def cmd(args):
 def add_parser(sub):
     parser = sub.add_parser('menuconfig', help=__doc__, description=__doc__)
 
-    parser.add_argument('--config', help='Using the user specified configuration file.', dest='menuconfig_fn')
+    parser.add_argument(
+        '--config',
+        help='Using the user specified configuration file.',
+        dest='menuconfig_fn',
+    )
 
     parser.add_argument(
-        '--generate', help='generate rtconfig.h by .config.', action='store_true', default=False, dest='menuconfig_g'
+        '--generate',
+        help='generate rtconfig.h by .config.',
+        action='store_true',
+        default=False,
+        dest='menuconfig_g',
     )
 
     parser.add_argument(

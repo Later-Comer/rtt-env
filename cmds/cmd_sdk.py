@@ -23,6 +23,7 @@
 # 2024-04-04     bernard         the first version
 
 import os
+import sys
 import json
 import platform
 from vars import Import, Export
@@ -30,18 +31,12 @@ from vars import Import, Export
 '''RT-Thread environment sdk setting'''
 
 
-class MenuConfigArgs:
-    menuconfig_fn = False
-    menuconfig_g = False
-    menuconfig_silent = False
-    menuconfig_setting = False
-
-
 def cmd(args):
     from cmds import cmd_menuconfig
     from cmds.cmd_package import list_packages
     from cmds.cmd_package import get_packages
     from cmds.cmd_package import package_update
+    import menuconfig
 
     # change to sdk root directory
     tools_kconfig_path = os.path.join(Import('env_root'), 'tools')
@@ -56,9 +51,8 @@ def cmd(args):
     before_bsp_root = Import('bsp_root')
     Export('bsp_root')
 
-    args = MenuConfigArgs()
-    # do menuconfig
-    cmd_menuconfig.cmd(args)
+    sys.argv = ['menuconfig', 'Kconfig']
+    menuconfig._main()
 
     # update package
     package_update()
@@ -66,17 +60,17 @@ def cmd(args):
     # update sdk list information
     packages = get_packages()
 
-    sdk_packages = []
-    for item in packages:
-        sdk_item = {}
-        sdk_item['name'] = item['name']
-        sdk_item['path'] = item['name'] + '-' + item['ver']
+    # sdk_packages = []
+    # for item in packages:
+    #     sdk_item = {}
+    #     sdk_item['name'] = item['name']
+    #     sdk_item['path'] = item['name'] + '-' + item['ver']
 
-        sdk_packages.append(sdk_item)
+    #     sdk_packages.append(sdk_item)
 
-    # write sdk_packages to sdk_list.json
-    with open(os.path.join(tools_kconfig_path, 'sdk_list.json'), 'w', encoding='utf-8') as f:
-        json.dump(sdk_packages, f, ensure_ascii=False, indent=4)
+    # # write sdk_packages to sdk_list.json
+    # with open(os.path.join(tools_kconfig_path, 'sdk_list.json'), 'w', encoding='utf-8') as f:
+    #     json.dump(sdk_packages, f, ensure_ascii=False, indent=4)
 
     # restore the old directory
     os.chdir(beforepath)
