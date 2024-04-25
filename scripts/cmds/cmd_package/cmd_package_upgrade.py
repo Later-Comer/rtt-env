@@ -100,9 +100,7 @@ def get_mac_address():
     return ":".join([mac[e : e + 2] for e in range(0, 11, 2)])
 
 
-def Information_statistics(args):
-    # get the .config file from env
-    env_config_file = args.env_config_file
+def Information_statistics(env_config_file):
 
     if not os.path.isfile(env_config_file):
         return
@@ -126,9 +124,6 @@ def package_update_index(args):
     """Update the package repository directory and env function scripts."""
 
     if os.environ.get("RTTS_PLATFROM") != "STUDIO":  # not used in studio
-        Information_statistics(args)
+        Information_statistics(args.env_config_file)
 
     upgrade_packages_index(args)
-
-    # if upgrade_script:
-    #     upgrade_env_script(args)

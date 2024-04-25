@@ -153,7 +153,7 @@ def is_user_mange_package(package_install_path, pkg):
 is_China_ip = None
 
 
-def need_using_mirror_download(config_file=os.path.join(Import("env_root"), ".config")):
+def need_using_mirror_download(config_file=os.path.join(os.getenv("ENV_ROOT"), ".config")):
     global is_China_ip
 
     if is_China_ip != None:

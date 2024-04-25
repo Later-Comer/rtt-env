@@ -218,16 +218,6 @@ def find_string_macro_in_config(filename, macro_name):
         return None
 
 
-# return IAR execution path string or None for failure
-def find_IAR_EXEC_PATH(env_config_file):
-    return find_string_macro_in_config(env_config_file, "SYS_CREATE_IAR_EXEC_PATH")
-
-
-# return Keil-MDK execution path string or None for failure
-def find_MDK_EXEC_PATH(env_config_file):
-    return find_string_macro_in_config(env_config_file, "SYS_CREATE_MDK_EXEC_PATH")
-
-
 def remove_folder(folder_path):
     try:
         if os.path.isdir(folder_path):
