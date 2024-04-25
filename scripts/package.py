@@ -199,6 +199,7 @@ class PackageOperation:
             else:
                 if archive.package_integrity_test(path):
                     # print "The file is rigit."
+                    print("found %s" % path)
                     return True
                 else:
                     os.remove(path)

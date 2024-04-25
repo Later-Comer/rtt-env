@@ -261,6 +261,7 @@ def install_not_git_package(package, package_info, package_download_path, packag
     # unpack package
     if not os.path.exists(pkg_dir):
         try:
+            print("try unpack %s" % package_path)
             if not archive.unpack(package_path, package_install_path, package_info, package_name):
                 result = False
         except Exception as e:
@@ -315,6 +316,7 @@ def install_package(package_info, args):
 
     pkgs_name_in_json = package.get_name()
     logging.info("begin to install packages: {0}".format(pkgs_name_in_json))
+    print("begin to install packages: {0}".format(pkgs_name_in_json))
     if is_git_url(package_url):
         ver_sha = package.get_versha(package_info["ver"])
 
@@ -409,7 +411,6 @@ def update_latest_packages(sys_value, args):
         pkg_path = pkg["path"]
         if pkg_path[0] == "/" or pkg_path[0] == "\\":
             pkg_path = pkg_path[1:]
-        print(pkgs_root, pkg_path)
         pkg_path = os.path.join(pkgs_root, pkg_path, "package.json")
         package.parse(pkg_path)
         pkgs_name_in_json = package.get_name()

@@ -114,7 +114,7 @@ def isdataexist(pathname):
 
 # Add data to the database, if the data already exists, don't add again
 def save_to_database(pathname, package_pathname, before_change_name, package_install_dir):
-
+    db_pathname = Import("dbsqlite_pathname")
     conn = get_conn(db_pathname)
     save_sql = """insert into packagefile values (?, ?, ?)"""
     package = os.path.basename(package_pathname)
