@@ -56,7 +56,7 @@ if (-not (Test-Path -Path $VENV_ROOT)) {
     # 激活python venv
     & "$VENV_ROOT\Scripts\Activate.ps1"
     # 安装env-script
-    pip install "$PSScriptRoot\toolchain\scripts"
+    pip install "$PSScriptRoot\scripts"
 } else {
     # 激活python venv
     & "$VENV_ROOT\Scripts\Activate.ps1"
@@ -65,7 +65,5 @@ if (-not (Test-Path -Path $VENV_ROOT)) {
 $env:ENV_ROOT = "$PSScriptRoot"
 $env:PKGS_ROOT = "$PSScriptRoot\manifests\packages"
 $env:PKGS_DIR = "$PSScriptRoot\manifests\packages"
-$env:PKG_INDEX_DIR = "$PSScriptRoot\manifests\packages"
-$env:SDK_INDEX_DIR = "$PSScriptRoot\manifests\toolchain"
-$env:SDK_INSTALL_DIR = "$PSScriptRoot\toolchain"
+
 $env:pathext = ".ps1; $env:pathext"
