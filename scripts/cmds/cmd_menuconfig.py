@@ -29,7 +29,7 @@ import os
 import platform
 import re
 import sys
-
+import shutil
 from vars import Import
 from .cmd_package.cmd_package_utils import find_bool_macro_in_config, find_IAR_EXEC_PATH, find_MDK_EXEC_PATH
 
@@ -52,19 +52,22 @@ def build_kconfig_frontends(rtt_root):
 
 
 def get_rtt_root():
-    rtt_root = os.getenv("RTT_ROOT")
-    if rtt_root is None:
-        bsp_root = Import("bsp_root")
-        if not os.path.exists(os.path.join(bsp_root, 'Kconfig')):
-            return rtt_root
-        with open(os.path.join(bsp_root, 'Kconfig')) as kconfig:
-            lines = kconfig.readlines()
-        for i in range(len(lines)):
-            if "config RTT_DIR" in lines[i]:
-                rtt_root = lines[i + 3].strip().split(" ")[1].strip('"')
-                if not os.path.isabs(rtt_root):
-                    rtt_root = os.path.join(bsp_root, rtt_root)
-                break
+    if os.getenv("RTT_ROOT"):
+        rtt_root = os.getenv("RTT_ROOT")
+    elif os.getenv("RTT_DIR"):
+        rtt_root = os.getenv("RTT_DIR")
+    elif os.path.isfile("Kconfig"):
+        rtt_root = None
+        with open('Kconfig') as f:
+            lines = f.readlines()
+            for i in range(len(lines)):
+                if "config RTT_DIR" in lines[i]:
+                    rtt_root = lines[i + 3].strip().split(" ")[1].strip('"')
+                    if not os.path.isabs(rtt_root):
+                        rtt_root = os.path.normpath(os.path.join(os.getcwd(), rtt_root))
+                    break
+    else:
+        rtt_root = None
     return rtt_root
 
 
@@ -176,11 +179,8 @@ def cmd(args):
     import menuconfig
     import defconfig
 
-    env_root = Import('env_root')
-
-    # get RTT_DIR from environment or Kconfig file
-    if get_rtt_root():
-        os.environ['RTT_DIR'] = get_rtt_root()
+    if args.rtt_root:
+        os.environ["RTT_DIR"] = args.rtt_root
 
     if not os.path.exists('Kconfig'):
         if platform.system() == "Windows":
@@ -203,35 +203,22 @@ def cmd(args):
     if platform.system() == "Windows":
         os.system('chcp 437  > nul')
 
-    # Env config, auto update packages and create mdk/iar project
-    if args.menuconfig_setting:
-        env_kconfig_path = os.path.join(env_root, 'tools', 'scripts', 'cmds')
-        beforepath = os.getcwd()
-        os.chdir(env_kconfig_path)
-        sys.argv = ['menuconfig', 'Kconfig']
-        menuconfig._main()
-        os.chdir(beforepath)
-        return
-
-    # generate rtconfig.h by .config.
-    if args.menuconfig_g:
-        print('generate rtconfig.h from .config')
-        mk_rtconfig(".config")
-        return
-
     if os.path.isfile(".config"):
         mtime = os.path.getmtime(".config")
     else:
         mtime = -1
 
     # Using the user specified configuration file
-    if args.menuconfig_fn:
-        print('use', args.menuconfig_fn)
-        import shutil
+    if args.useconfig != ".config":
+        print('use', args.useconfig)
+        shutil.copy(args.useconfig, ".config")
 
-        shutil.copy(args.menuconfig_fn, ".config")
+    # generate rtconfig.h by .config.
+    if args.genheader:
+        print('generate rtconfig.h from .config')
+        mk_rtconfig(".config")
 
-    if args.menuconfig_silent:
+    if args.silent:
         sys.argv = ['defconfig', '--kconfig=Kconfig', '.config']
         defconfig._main()
     else:
@@ -248,8 +235,7 @@ def cmd(args):
         mk_rtconfig(".config")
 
     # update pkgs
-    env_kconfig_path = os.path.join(env_root, 'tools', 'scripts', 'cmds')
-    fn = os.path.join(env_kconfig_path, '.config')
+    fn = args.env_config_file
 
     if not os.path.isfile(fn):
         return
@@ -263,8 +249,8 @@ def cmd(args):
 
     if platform.system() == "Windows":
         if find_bool_macro_in_config(fn, 'SYS_CREATE_MDK_IAR_PROJECT'):
-            mdk_path = find_MDK_EXEC_PATH()
-            iar_path = find_IAR_EXEC_PATH()
+            mdk_path = find_MDK_EXEC_PATH(fn)
+            iar_path = find_IAR_EXEC_PATH(fn)
 
             if find_bool_macro_in_config(fn, 'SYS_CREATE_MDK4'):
                 if mdk_path:
@@ -286,21 +272,37 @@ def cmd(args):
                 print("Create IAR project done")
 
 
-def add_parser(sub):
-    parser = sub.add_parser('menuconfig', help=__doc__, description=__doc__)
+def add_parser(subparsers):
+    parser = subparsers.add_parser(
+        "cfg",
+        aliases=["mconfig", 'menuconfig'],
+        help=__doc__,
+        description=__doc__,
+    )
 
     parser.add_argument(
         '--config',
+        '--useconfig',
         help='Using the user specified configuration file.',
-        dest='menuconfig_fn',
+        default=".config",
+        dest='useconfig',
+    )
+
+    parser.add_argument(
+        '--genconfig',
+        help='generate .config by rtonfig.h.',
+        action='store_true',
+        default=False,
+        dest='genconfig',
     )
 
     parser.add_argument(
         '--generate',
+        '--genheader',
         help='generate rtconfig.h by .config.',
         action='store_true',
         default=False,
-        dest='menuconfig_g',
+        dest='genheader',
     )
 
     parser.add_argument(
@@ -308,16 +310,44 @@ def add_parser(sub):
         help='Silent mode,don\'t display menuconfig window.',
         action='store_true',
         default=False,
-        dest='menuconfig_silent',
+        dest='silent',
+    )
+
+    # parser.add_argument(
+    #     '-s',
+    #     '--setting',
+    #     help='Env config,auto update packages and create mdk/iar project',
+    #     action='store_true',
+    #     default=False,
+    #     dest='menuconfig_setting',
+    # )
+
+    parser.add_argument(
+        "--bsp-root",
+        help="bsp root, %s" % os.getcwd(),
+        default=os.getcwd(),
+        dest="bsp_root",
     )
 
     parser.add_argument(
-        '-s',
-        '--setting',
-        help='Env config,auto update packages and create mdk/iar project',
-        action='store_true',
-        default=False,
-        dest='menuconfig_setting',
+        "--rtt-root",
+        help="rtt root, %s" % get_rtt_root(),
+        default=get_rtt_root(),
+        dest="rtt_root",
+    )
+
+    parser.add_argument(
+        "--env-root",
+        help="env root, %s" % Import("env_root"),
+        default=Import("env_root"),
+        dest="env_root",
+    )
+
+    parser.add_argument(
+        "--env-config-file",
+        help="env config file, %s" % os.path.join(Import("env_root"), ".config"),
+        default=os.path.join(Import("env_root"), ".config"),
+        dest="env_config_file",
     )
 
     # parser.add_argument('--easy',

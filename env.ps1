@@ -63,7 +63,7 @@ if (-not (Test-Path -Path $VENV_ROOT)) {
 }
 
 $env:ENV_ROOT = "$PSScriptRoot"
-$env:PKGS_ROOT = "$PSScriptRoot\manifests\packages"
-$env:PKGS_DIR = "$PSScriptRoot\manifests\packages"
+$env:PKGS_ROOT = "$PSScriptRoot\manifests"
+$env:PKGS_DIR = "$PSScriptRoot\manifests"
 
 $env:pathext = ".ps1; $env:pathext"

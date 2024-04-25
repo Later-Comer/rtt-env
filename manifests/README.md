@@ -2,4 +2,4 @@
 
 packages: <https://github.com/rt-thread/packages.git>
 
-toolchain:<https://github.com/rt-thread/sdk.git>
+toolchain: <https://github.com/rt-thread/sdk.git>

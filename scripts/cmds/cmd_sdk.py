@@ -39,48 +39,46 @@ def cmd(args):
     import menuconfig
 
     # change to sdk root directory
-    tools_kconfig_path = os.path.join(Import('env_root'), 'tools')
     beforepath = os.getcwd()
-    os.chdir(tools_kconfig_path)
+    os.chdir(args.env_root)
 
-    # set HOSTOS
-    os.environ['HOSTOS'] = platform.system()
-
-    # change bsp root to sdk root
-    bsp_root = tools_kconfig_path
-    before_bsp_root = Import('bsp_root')
-    Export('bsp_root')
-
+    # start menuconfig
     sys.argv = ['menuconfig', 'Kconfig']
     menuconfig._main()
 
     # update package
-    package_update()
-
-    # update sdk list information
-    packages = get_packages()
-
-    # sdk_packages = []
-    # for item in packages:
-    #     sdk_item = {}
-    #     sdk_item['name'] = item['name']
-    #     sdk_item['path'] = item['name'] + '-' + item['ver']
-
-    #     sdk_packages.append(sdk_item)
-
-    # # write sdk_packages to sdk_list.json
-    # with open(os.path.join(tools_kconfig_path, 'sdk_list.json'), 'w', encoding='utf-8') as f:
-    #     json.dump(sdk_packages, f, ensure_ascii=False, indent=4)
+    os.system("pkgs --update --index-path=%s --install-path=%s" % (args.index_path, args.install_path))
 
     # restore the old directory
     os.chdir(beforepath)
 
-    # restore the old bsp_root
-    bsp_root = before_bsp_root
-    Export('bsp_root')
 
+def add_parser(subparsers):
+    parser = subparsers.add_parser(
+        'sdk',
+        help=__doc__,
+        description=__doc__,
+    )
 
-def add_parser(sub):
-    parser = sub.add_parser('sdk', help=__doc__, description=__doc__)
+    parser.add_argument(
+        "--env-root",
+        help="env root, %s" % Import("env_root"),
+        default=Import("env_root"),
+        dest="env_root",
+    )
+
+    parser.add_argument(
+        "--index-path",
+        help="toolchain index path, %s" % os.path.join(Import("env_root"), "manifests", "toolchain"),
+        default=os.path.join(Import("env_root"), "manifests", "toolchain"),
+        dest="index_path",
+    )
+
+    parser.add_argument(
+        "--install-path",
+        help="toolchain install path, %s" % os.path.join(Import("env_root"), "program"),
+        default=os.path.join(Import("env_root"), "program"),
+        dest="install_path",
+    )
 
     parser.set_defaults(func=cmd)

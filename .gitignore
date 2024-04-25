@@ -106,4 +106,4 @@ cmds/.config.old
 /cmds/.config
 
 download/*
-toolchain/*
+program/*

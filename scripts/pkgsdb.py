@@ -37,7 +37,7 @@ def get_file_md5(filename):
     if not os.path.isfile(filename):
         return
     hash_value = hashlib.md5()
-    f = open(filename, 'rb')
+    f = open(filename, "rb")
     while True:
         b = f.read(8096)
         if not b:
@@ -52,8 +52,8 @@ def get_conn(path):
     if os.path.exists(path) and os.path.isfile(path):
         return conn
     else:
-        print('on memory:[:memory:]')
-        return sqlite3.connect(':memory:')
+        print("on memory:[:memory:]")
+        return sqlite3.connect(":memory:")
 
 
 def close_all(conn):
@@ -65,39 +65,39 @@ def get_cursor(conn):
     if conn is not None:
         return conn.cursor()
     else:
-        return get_conn('').cursor()
+        return get_conn("").cursor()
 
 
 def create_table(conn, sql):
-    if sql is not None and sql != '':
+    if sql is not None and sql != "":
         cu = get_cursor(conn)
         if SHOW_SQL:
-            print('execute :[{}]'.format(sql))
+            print("execute :[{}]".format(sql))
         cu.execute(sql)
         conn.commit()
         close_all(conn)
     else:
-        print('the [{}] is empty or equal None!'.format(sql))
+        print("the [{}] is empty or equal None!".format(sql))
 
 
 def save(conn, sql, data):
     """insert data to database"""
-    if sql is not None and sql != '':
+    if sql is not None and sql != "":
         if data is not None:
             cu = get_cursor(conn)
             for d in data:
                 if SHOW_SQL:
-                    print('execute sql:[{}],arguments:[{}]'.format(sql, d))
+                    print("execute sql:[{}],arguments:[{}]".format(sql, d))
                 cu.execute(sql, d)
                 conn.commit()
             close_all(conn)
     else:
-        print('the [{}] is empty or equal None!'.format(sql))
+        print("the [{}] is empty or equal None!".format(sql))
 
 
 def isdataexist(pathname):
     ret = True
-    dbfilename = Import('dbsqlite_pathname')
+    dbfilename = Import("dbsqlite_pathname")
 
     conn = get_conn(dbfilename)
     c = get_cursor(conn)
@@ -113,15 +113,12 @@ def isdataexist(pathname):
 
 
 # Add data to the database, if the data already exists, don't add again
-def save_to_database(pathname, package_pathname, before_change_name):
-    db_pathname = Import('dbsqlite_pathname')
-    bsp_root = Import('bsp_root')
-    bsp_packages_path = os.path.join(bsp_root, 'packages')
+def save_to_database(pathname, package_pathname, before_change_name, package_install_dir):
 
     conn = get_conn(db_pathname)
-    save_sql = '''insert into packagefile values (?, ?, ?)'''
+    save_sql = """insert into packagefile values (?, ?, ?)"""
     package = os.path.basename(package_pathname)
-    md5pathname = os.path.join(bsp_packages_path, before_change_name)
+    md5pathname = os.path.join(package_install_dir, before_change_name)
 
     if not os.path.isfile(md5pathname):
         print("md5pathname is Invalid")
@@ -165,14 +162,14 @@ def remove_unchanged_file(pathname, dbfilename, dbsqlname):
         os.remove(pathname)
     else:
         print("%s has been changed." % pathname)
-        print('Are you sure you want to permanently delete the file: %s?' % os.path.basename(pathname))
+        print("Are you sure you want to permanently delete the file: %s?" % os.path.basename(pathname))
         print(
-            'If you choose to keep the changed file,you should copy the file to another folder. '
-            '\nbecaues it may be covered by the next update.'
+            "If you choose to keep the changed file,you should copy the file to another folder. "
+            "\nbecaues it may be covered by the next update."
         )
 
-        rc = user_input('Press the Y Key to delete the folder or just press Enter to keep it : ')
-        if rc == 'y' or rc == 'Y':
+        rc = user_input("Press the Y Key to delete the folder or just press Enter to keep it : ")
+        if rc == "y" or rc == "Y":
             sql = "DELETE from packagefile where pathname = '" + dbsqlname + "'"
             conn.commit()
             os.remove(pathname)

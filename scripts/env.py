@@ -38,26 +38,26 @@ sys.path.insert(0, mpath)
 from cmds import *
 from vars import Export
 
-__version__ = 'RT-Thread Env Tool v1.5.0'
+__version__ = "RT-Thread Env Tool v1.5.0"
 
 
 def init_argparse():
     parser = argparse.ArgumentParser(description=__doc__)
-    subs = parser.add_subparsers()
 
-    parser.add_argument('-v', '--version', action='version', version=__version__)
+    parser.add_argument("-v", "--version", action="version", version=__version__)
 
-    cmd_system.add_parser(subs)
-    cmd_menuconfig.add_parser(subs)
-    cmd_package.add_parser(subs)
-    cmd_sdk.add_parser(subs)
+    subparsers = parser.add_subparsers()
+    cmd_system.add_parser(subparsers)
+    cmd_menuconfig.add_parser(subparsers)
+    cmd_package.add_parser(subparsers)
+    cmd_sdk.add_parser(subparsers)
 
     return parser
 
 
 def init_logger(env_root):
     log_format = "%(module)s %(lineno)d %(levelname)s %(message)s \n"
-    date_format = '%Y-%m-%d  %H:%M:%S %a '
+    date_format = "%Y-%m-%d  %H:%M:%S %a "
     logging.basicConfig(
         level=logging.WARNING,
         format=log_format,
@@ -69,17 +69,20 @@ def init_logger(env_root):
 def get_env_root():
     env_root = os.getenv("ENV_ROOT")
     if env_root is None:
-        if platform.system() != 'Windows':
-            env_root = os.path.join(os.getenv('HOME'), '.env')
+        if platform.system() != "Windows":
+            env_root = os.path.join(os.getenv("HOME"), ".env")
         else:
-            env_root = os.path.join(os.getenv('USERPROFILE'), '.env')
+            env_root = os.path.join(os.getenv("USERPROFILE"), ".env")
     return env_root
 
 
 def get_package_root():
-    package_root = os.getenv("PKGS_ROOT")
-    if package_root is None:
-        package_root = os.path.join(get_env_root(), 'packages')
+    if os.getenv("PKGS_DIR"):
+        package_root = os.getenv("PKGS_DIR")
+    elif os.getenv("PKGS_ROOT"):
+        package_root = os.getenv("PKGS_ROOT")
+    else:
+        package_root = os.path.join(get_env_root(), "manifests", "pkg")
     return package_root
 
 
@@ -88,10 +91,10 @@ def get_bsp_root():
 
     # noinspection PyBroadException
     try:
-        bsp_root.encode('utf-8').decode("ascii")
+        bsp_root.encode("utf-8").decode("ascii")
     except Exception as e:
         if platform.system() == "Windows":
-            os.system('chcp 65001  > nul')
+            os.system("chcp 65001  > nul")
 
         print("\n\033[1;31;40m警告：\033[0m")
         print("\033[1;31;40m当前路径不支持非英文字符，请修改当前路径为纯英文路径。\033[0m")
@@ -99,7 +102,7 @@ def get_bsp_root():
         print("\033[1;31;40mPlease modify the current path to a pure English path.\033[0m")
 
         if platform.system() == "Windows":
-            os.system('chcp 437  > nul')
+            os.system("chcp 437  > nul")
 
         exit(1)
 
@@ -114,13 +117,15 @@ def export_environment_variable():
     bsp_root = get_bsp_root()
 
     os.environ["ENV_ROOT"] = env_root
-    os.environ['PKGS_ROOT'] = pkgs_root
-    os.environ['PKGS_DIR'] = pkgs_root
-    os.environ['BSP_DIR'] = bsp_root
+    os.environ["PKGS_ROOT"] = pkgs_root
+    os.environ["PKGS_DIR"] = pkgs_root
+    os.environ["BSP_DIR"] = bsp_root
 
-    Export('env_root')
-    Export('pkgs_root')
-    Export('bsp_root')
+    os.environ['HOSTOS'] = platform.system()
+
+    Export("env_root")
+    Export("pkgs_root")
+    Export("bsp_root")
 
 
 def exec_arg(arg):
@@ -128,7 +133,6 @@ def exec_arg(arg):
     init_logger(get_env_root())
 
     sys.argv.insert(1, arg)
-
     parser = init_argparse()
     args = parser.parse_args()
     args.func(args)
@@ -148,20 +152,20 @@ def main():
 
 
 def menuconfig():
-    exec_arg('menuconfig')
+    exec_arg("menuconfig")
 
 
 def pkgs():
-    exec_arg('pkg')
+    exec_arg("pkg")
 
 
 def sdk():
-    exec_arg('sdk')
+    exec_arg("sdk")
 
 
 def system():
-    exec_arg('system')
+    exec_arg("system")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

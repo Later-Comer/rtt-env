@@ -1,4 +1,3 @@
-orsource "*/Kconfig"
 
 menu "RT-Thread Env config"
 
@@ -60,3 +59,4 @@ config SYS_PKGS_USING_STATISTICS
 
 endmenu
 
+orsource "manifests/toolchain/Kconfig"

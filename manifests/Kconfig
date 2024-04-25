@@ -1,1 +1,1 @@
-orsource "*/Kconfig"
+source "$PKGS_DIR/packages/Kconfig"
