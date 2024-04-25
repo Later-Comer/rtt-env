@@ -38,4 +38,4 @@ def package_print_env():
 
 
 def package_print_help():
-    os.system("env pkg -h")
+    os.system("env.exe pkg -h")
