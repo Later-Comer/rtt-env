@@ -153,14 +153,13 @@ def is_user_mange_package(package_install_path, pkg):
 is_China_ip = None
 
 
-def need_using_mirror_download(args):
+def need_using_mirror_download(config_file=os.path.join(Import("env_root"), ".config")):
     global is_China_ip
 
     if is_China_ip != None:
         return is_China_ip
 
     server_decision = ""
-    config_file = args.env_config_file
     if os.path.isfile(config_file) and find_bool_macro_in_config(config_file, "SYS_DOWNLOAD_SERVER_GITHUB"):
         is_China_ip = False  # Github which means not China IP
         server_decision = "manually decision"
@@ -323,7 +322,7 @@ def install_package(package_info, args):
 
     # noinspection PyBroadException
     try:
-        if need_using_mirror_download(args):
+        if need_using_mirror_download(args.env_config_file):
             get_package_url, get_ver_sha = get_url_from_mirror_server(pkgs_name_in_json, package_info["ver"])
 
             #  Check whether the package package url is valid
@@ -423,7 +422,7 @@ def update_latest_packages(sys_value, args):
             # noinspection PyBroadException
             try:
                 # If mirror acceleration is enabled, get the update address from the mirror server.
-                if need_using_mirror_download(args):
+                if need_using_mirror_download(args.env_config_file):
                     payload_pkgs_name_in_json = pkgs_name_in_json.encode("utf-8")
 
                     # Change repo's upstream address.
@@ -580,9 +579,7 @@ def pre_package_update(args):
 
 
 def error_packages_handle(error_packages_list, read_back_pkgs_json, package_filename, args):
-    # bsp_root = Import("bsp_root")
-    # env_root = Import("env_root")
-    # pkgs_root = Import("pkgs_root")
+
     download_error = []
     flag = True
 

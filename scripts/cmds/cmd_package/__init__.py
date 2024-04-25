@@ -32,7 +32,7 @@ from .cmd_package_printenv import package_print_env, package_print_help
 from .cmd_package_list import list_packages, get_packages
 from .cmd_package_wizard import package_wizard
 from .cmd_package_update import package_update
-from .cmd_package_upgrade import package_update_index, package_upgrade_modules, update_packages_kconfig
+from .cmd_package_upgrade import package_update_index
 
 
 def run_env_cmd(args):
@@ -45,17 +45,11 @@ def run_env_cmd(args):
     elif args.package_create:
         package_wizard()
     elif args.list_packages:
-        list_packages(args)
+        list_packages(args.package_index_path, args.package_install_info)
     elif args.package_update_index:
         package_update_index(args)
     elif args.package_update_index_force:
         package_update_index(args)
-    # elif args.package_upgrade_script_force:
-    #     package_update_index(args)
-    # elif args.package_upgrade_modules:
-    #     package_upgrade_modules()
-    elif args.package_update_kconfig:
-        update_packages_kconfig(args)
     elif args.package_print_env:
         package_print_env()
     else:
@@ -106,7 +100,7 @@ def add_parser(subparsers):
     )
 
     parser.add_argument(
-        '--upgrade',
+        "--upgrade",
         "--update-index",
         help="upgrade local packages index from git repository",
         action="store_true",
@@ -115,38 +109,14 @@ def add_parser(subparsers):
     )
 
     parser.add_argument(
-        '--upgrade-force',
-        '--force-upgrade',
+        "--upgrade-force",
+        "--force-upgrade",
         "--update-index-force",
         "--force-update-index",
         help="forcely upgrade local packages index from git repository",
         action="store_true",
         default=False,
         dest="package_update_index_force",
-    )
-
-    # parser.add_argument(
-    #     "--upgrade-script-force",
-    #     help="forcely upgrade local packages index and Env script from git repository",
-    #     action="store_true",
-    #     default=False,
-    #     dest="package_upgrade_script_force",
-    # )
-
-    # parser.add_argument(
-    #     "--upgrade-modules",
-    #     help="upgrade python modules, e.g. requests module",
-    #     action="store_true",
-    #     default=False,
-    #     dest="package_upgrade_modules",
-    # )
-
-    parser.add_argument(
-        "--update-kconfig",
-        help="update Kconfig in packages index",
-        action="store_true",
-        default=False,
-        dest="package_update_kconfig",
     )
 
     parser.add_argument(

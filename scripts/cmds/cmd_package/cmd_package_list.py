@@ -30,15 +30,13 @@ from package import PackageOperation
 from vars import Import
 
 
-def get_packages():
+def get_packages(pkgs_root, config_file=".config"):
     """Get the packages list in env.
 
     Read the.config file in the BSP directory,
     and return the version number of the selected package.
     """
 
-    config_file = ".config"
-    pkgs_root = Import("pkgs_root")
     packages = []
     if not os.path.isfile(config_file):
         print(
@@ -67,15 +65,12 @@ def get_packages():
     return packages
 
 
-def list_packages(args):
+def list_packages(pkgs_root, config_file=".config"):
     """Print the packages list in env.
 
     Read the.config file in the BSP directory,
     and list the version number of the selected package.
     """
-
-    config_file = args.package_install_info
-    pkgs_root = args.package_index_path
 
     if not os.path.isfile(config_file):
         if platform.system() == "Windows":

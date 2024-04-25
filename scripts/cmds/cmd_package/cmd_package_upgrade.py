@@ -48,7 +48,7 @@ def upgrade_packages_index(args):
     """Update the package repository index."""
 
     force_upgrade = args.package_update_index_force
-    if need_using_mirror_download(args):
+    if need_using_mirror_download(args.env_config_file):
         get_package_url, get_ver_sha = get_url_from_mirror_server("packages", "latest")
 
         if get_package_url is not None:
@@ -95,46 +95,6 @@ def upgrade_packages_index(args):
                 print("==============================>  Env %s update done \n" % filename)
 
 
-# def upgrade_env_script(force_upgrade=False):
-#     """Update env function scripts."""
-
-#     env_root = Import("env_root")
-
-#     if need_using_mirror_download(args):
-#         get_package_url, get_ver_sha = get_url_from_mirror_server("env", "latest")
-
-#         if get_package_url is not None:
-#             env_scripts_repo = get_package_url
-#         else:
-#             print("Failed to get url from mirror server. Using default url.")
-#             env_scripts_repo = "https://gitee.com/RT-Thread-Mirror/env.git"
-#     else:
-#         env_scripts_repo = "https://github.com/RT-Thread/env.git"
-
-#     env_scripts_root = os.path.join(env_root, "tools", "scripts")
-#     if force_upgrade:
-#         cwd = os.getcwd()
-#         os.chdir(env_scripts_root)
-#         os.system("git fetch --all")
-#         os.system("git reset --hard origin/master")
-#         os.chdir(cwd)
-#     print("Begin to upgrade env scripts.")
-#     git_pull_repo(env_scripts_root, env_scripts_repo)
-#     print("==============================>  Env scripts upgrade done \n")
-
-
-def update_packages_kconfig(args):
-
-    packages_root = args.package_index_path
-    dir_list = os.listdir(packages_root)
-
-    with open(os.path.join(packages_root, "Kconfig"), "w") as kconfig:
-        for item in dir_list:
-            if os.path.isfile(os.path.join(packages_root, item, "Kconfig")):
-                kconfig.write('source "$PKGS_DIR/' + item + '/Kconfig"')
-                kconfig.write("\n")
-
-
 def get_mac_address():
     mac = uuid.UUID(int=uuid.getnode()).hex[-12:]
     return ":".join([mac[e : e + 2] for e in range(0, 11, 2)])
@@ -172,19 +132,3 @@ def package_update_index(args):
 
     # if upgrade_script:
     #     upgrade_env_script(args)
-
-
-# upgrade python modules
-def package_upgrade_modules():
-    try:
-        from subprocess import call
-
-        call("python -m pip install --upgrade pip", shell=True)
-
-        import pip
-        from pip._internal.utils.misc import get_installed_distributions
-
-        for dist in get_installed_distributions():
-            call("python -m pip install --upgrade " + dist.project_name, shell=True)
-    except:
-        print("Fail to upgrade python modules!")
