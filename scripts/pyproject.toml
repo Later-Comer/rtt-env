@@ -1,4 +1,4 @@
 [tool.black]
 line-length = 128
-skip-string-normalization = true
+skip-string-normalization = false
 use-tabs = false

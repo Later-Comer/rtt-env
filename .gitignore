@@ -104,3 +104,6 @@ ENV/
 .vscode/settings.json
 cmds/.config.old
 /cmds/.config
+
+download/*
+toolchain/*

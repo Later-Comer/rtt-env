@@ -1,4 +1,6 @@
-menu "Env config"
+orsource "*/Kconfig"
+
+menu "RT-Thread Env config"
 
 config SYS_AUTO_UPDATE_PKGS
     bool "Auto update pkgs config"

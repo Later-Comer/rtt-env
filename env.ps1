@@ -1,31 +1,37 @@
 
+
+$tz = Get-TimeZone
+if ($tz.BaseUtcOffset.TotalHours -eq 8) {
+    $python_url = "https://registry.npmmirror.com/-/binary/python/3.12.3/python-3.12.3-amd64.exe"
+    $pkg_url = "https://github.com/rt-thread/packages"
+    $sdk_url = "https://github.com/rt-thread/sdk"
+    $git_url = "https://registry.npmmirror.com/-/binary/git-for-windows/v2.44.0.windows.1/MinGit-2.44.0-64-bit.zip"
+} else {
+    $python_url = "https://www.python.org/ftp/python/3.12.3/python-3.12.3-amd64.exe"
+    $pkg_url = "https://github.com/rt-thread/packages"
+    $sdk_url = "https://github.com/rt-thread/sdk"
+    $git_url = "https://registry.npmmirror.com/-/binary/git-for-windows/v2.44.0.windows.1/MinGit-2.44.0-64-bit.zip"
+}
+
+# settings = {}
+if (Test-Path -path "$PSScriptRoot\settings.json") {
+    
+}
+
+
 function Test-Command([string] $cmd) {
     ($null -ne (Get-Command $cmd -ErrorAction SilentlyContinue))
 }
 
 
-$tz = Get-TimeZone
-if ($tz.BaseUtcOffset.TotalHours -eq 8) {
-    $python_url = "https://registry.npmmirror.com/-/binary/python/3.12.3/python-3.12.3-amd64.exe"
-    $pkg_url = ""
-    $sdk_url = ""
-    $git_url = ""
-} else {
-    $python_url = "https://www.python.org/ftp/python/3.12.3/python-3.12.3-amd64.exe"
-    $pkg_url = ""
-    $sdk_url = ""
-    $git_url = ""
-}
-
-
 # install rtt-pkg
-if (-not (Test-Path -Path "$PSScriptRoot\manifests\pkg\.git")) {
-    
+if (-not (Test-Path -Path "$PSScriptRoot\manifests\packages\.git")) {
+    git clone $pkg_url $PSScriptRoot\manifests\packages
 }
 
 # install rtt-sdk
-if (-not (Test-Path -Path "$PSScriptRoot\manifests\sdk\.git")) {
-    
+if (-not (Test-Path -Path "$PSScriptRoot\manifests\toolchain\.git")) {
+    git clone $sdk_url $PSScriptRoot\manifests\toolchain
 }
 
 
@@ -41,6 +47,7 @@ if (!(Test-Command python)) {
     Write-Host  $(python --version)  "found in"  $(python -c "import sys; print(sys.executable)")
 }
 
+# activate rtt venv
 $VENV_ROOT = "$PSScriptRoot\.venv"
 # rt-env目录是否存在
 if (-not (Test-Path -Path $VENV_ROOT)) {
@@ -55,4 +62,10 @@ if (-not (Test-Path -Path $VENV_ROOT)) {
     & "$VENV_ROOT\Scripts\Activate.ps1"
 }
 
-$env:pathext = ".PS1; $env:pathext"
+$env:ENV_ROOT = "$PSScriptRoot"
+$env:PKGS_ROOT = "$PSScriptRoot\manifests\packages"
+$env:PKGS_DIR = "$PSScriptRoot\manifests\packages"
+$env:PKG_INDEX_DIR = "$PSScriptRoot\manifests\packages"
+$env:SDK_INDEX_DIR = "$PSScriptRoot\manifests\toolchain"
+$env:SDK_INSTALL_DIR = "$PSScriptRoot\toolchain"
+$env:pathext = ".ps1; $env:pathext"
