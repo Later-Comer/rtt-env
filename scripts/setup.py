@@ -22,10 +22,28 @@ setup(
         "kconfiglib",
         "windows-curses; platform_system=='Windows'",
     ],
-    package_dir={"": "src"},
-    packages=find_packages(
-        where="src",
-    ),
+    packages=[
+        "env",
+        "env.cmds",
+        "env.cmds.cmd_package",
+    ],
+    package_dir={
+        "env": ".",
+        "env.cmds": "./cmds",
+        "env.cmds.cmd_package": "./cmds/cmd_package",
+    },
+    package_data={
+        "env": [
+            "*.sh",
+            "*.ps1",
+            "*.bat",
+            "*.md",
+            "*.zip",
+            "LICENSE",
+            "pkgs",
+            "menuconfig",
+        ]
+    },
     include_package_data=True,
     entry_points={
         "console_scripts": [
