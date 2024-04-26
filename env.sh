@@ -8,16 +8,18 @@ need_install = 0
 
 # 判断git是否安装
 if ! which git > /dev/null 2>&1; then
+    echo "not found git"
     need_install = 1
 fi
 
 # 判断python是否安装
 if ! which python > /dev/null 2>&1; then
+    echo "not found python"
     need_install = 1 
 fi
 
 if [ need_install == 1 ]; then
-    echo -e
+    echo "install toolchain"
     sudo apt-get update
     sudo apt-get upgrade -y
 
@@ -40,14 +42,14 @@ fi
 
 # 创建python venv环境
 if [ ! -d "$shell_dir/.venv" ]; then
-    python -m venv .venv
+    python -m venv "$shell_dir/.venv"
     pip install "$shell_dir/scripts"
 fi
 
 source "$shell_dir/.venv/Scripts/Activate.sh"
 
 export ENV_ROOT="$shell_dir"
-export PKGS_ROOT="$shell_dir\manifests"
-export PKGS_DIR="$shell_dir\manifests"
+export PKGS_ROOT="$shell_dir/manifests"
+export PKGS_DIR="$shell_dirmanifests"
 
 export PATH=~/.env/tools/scripts:$PATH
