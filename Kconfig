@@ -59,4 +59,4 @@ config SYS_PKGS_USING_STATISTICS
 
 endmenu
 
-orsource "manifests/toolchain/Kconfig"
+orsource "manifests/toolchain/$HOSTOS/Kconfig"
