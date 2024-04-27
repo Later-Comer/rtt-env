@@ -37,7 +37,7 @@ setup(
     include_package_data=True,
     entry_points={
         "console_scripts": [
-            "env=env.env:main",
+            "rtt=env.env:main",
             "menuconfig=env.env:menuconfig",
             "pkgs=env.env:pkgs",
             "sdk=env.env:sdk",

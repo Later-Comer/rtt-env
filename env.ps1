@@ -1,5 +1,11 @@
 
 
+function install(){
+    
+
+}
+
+
 $tz = Get-TimeZone
 if ($tz.BaseUtcOffset.TotalHours -eq 8) {
     $python_url = "https://registry.npmmirror.com/-/binary/python/3.12.3/python-3.12.3-amd64.exe"
@@ -24,15 +30,15 @@ function Test-Command([string] $cmd) {
 }
 
 
-# install rtt-pkg
-if (-not (Test-Path -Path "$PSScriptRoot\manifests\packages\.git")) {
-    git clone $pkg_url $PSScriptRoot\manifests\packages
-}
+# # install rtt-pkg
+# if (-not (Test-Path -Path "$PSScriptRoot\manifests\packages\.git")) {
+#     git clone $pkg_url $PSScriptRoot\manifests\packages
+# }
 
-# install rtt-sdk
-if (-not (Test-Path -Path "$PSScriptRoot\manifests\toolchain\.git")) {
-    git clone $sdk_url $PSScriptRoot\manifests\toolchain
-}
+# # install rtt-sdk
+# if (-not (Test-Path -Path "$PSScriptRoot\manifests\toolchain\.git")) {
+#     git clone $sdk_url $PSScriptRoot\manifests\toolchain
+# }
 
 
 # install python
