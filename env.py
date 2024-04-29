@@ -119,7 +119,7 @@ def get_env_config_path():
 
 
 def get_env_config_file():
-    return os.path.join(get_env_config_path, ".config")
+    return os.path.join(get_env_config_path(), ".config")
 
 
 def export_environment_variable():

@@ -153,11 +153,13 @@ def is_user_mange_package(package_install_path, pkg):
 is_China_ip = None
 
 
-def need_using_mirror_download(config_file=Import("env_config_file")):
+def need_using_mirror_download(config_file=None):
     global is_China_ip
 
     if is_China_ip != None:
         return is_China_ip
+    if config_file == None:
+        config_file = Import("env_config_file")
 
     server_decision = ""
     if os.path.isfile(config_file) and find_bool_macro_in_config(config_file, "SYS_DOWNLOAD_SERVER_GITHUB"):

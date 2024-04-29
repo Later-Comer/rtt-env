@@ -59,6 +59,8 @@ def run_env_cmd(args):
 def get_download_path():
     if os.getenv("ENV_DOWNLOAD_PATH"):
         return os.getenv("ENV_DOWNLOAD_PATH")
+    elif os.path.isdir(os.path.join(Import("env_root"), "download")):
+        return os.path.join(Import("env_root"), "download")
     else:
         return os.path.join(Import("env_root"), "local_pkgs")
 
