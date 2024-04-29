@@ -117,7 +117,9 @@ Package_json_file = """{
 }
 """
 
-import codecs 
+import codecs
+
+
 class PackageOperation:
     pkg = None
 
@@ -190,19 +192,21 @@ class PackageOperation:
 
         retry_count = 0
 
-        headers = {'Connection': 'keep-alive',
-                   'Accept-Encoding': 'gzip, deflate',
-                   'Accept': '*/*',
-                   'User-Agent': 'curl/7.54.0'}
+        headers = {
+            "Connection": "keep-alive",
+            "Accept-Encoding": "gzip, deflate",
+            "Accept": "*/*",
+            "User-Agent": "curl/7.54.0",
+        }
 
-        print('downloading ' + filename + ' ...')
+        print("downloading " + filename + " ...")
 
         while True:
             try:
                 r = requests.get(url_from_srv, stream=True, headers=headers)
-                total_size = int(r.headers.get('content-length', 0))
+                total_size = int(r.headers.get("content-length", 0))
 
-                with open(path, 'wb') as f, tqdm(total=total_size, unit='B', unit_scale=True) as bar:
+                with open(path, "wb") as f, tqdm(total=total_size, unit="B", unit_scale=True) as bar:
                     # if the chunk_size is too large, the progress bar will not display
                     for chunk in r.iter_content(chunk_size=1024):
                         if chunk:

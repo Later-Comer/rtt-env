@@ -28,7 +28,7 @@ import json
 import platform
 from vars import Import, Export
 
-'''RT-Thread environment sdk setting'''
+"""RT-Thread environment sdk setting"""
 
 
 def cmd(args):
@@ -43,7 +43,7 @@ def cmd(args):
     os.chdir(args.env_root)
 
     # start menuconfig
-    sys.argv = ['menuconfig', 'Kconfig']
+    sys.argv = ["menuconfig", "Kconfig"]
     menuconfig._main()
 
     # update package
@@ -55,7 +55,7 @@ def cmd(args):
 
 def add_parser(subparsers):
     parser = subparsers.add_parser(
-        'sdk',
+        "sdk",
         help=__doc__,
         description=__doc__,
     )
@@ -69,15 +69,15 @@ def add_parser(subparsers):
 
     parser.add_argument(
         "--index-path",
-        help="toolchain index path, %s" % os.path.join(Import("env_root"), "manifests", "toolchain"),
-        default=os.path.join(Import("env_root"), "manifests", "toolchain"),
+        help="toolchain index path, %s" % os.path.join(Import("env_root"), "packages", "sdk"),
+        default=os.path.join(Import("env_root"), "packages", "sdk"),
         dest="index_path",
     )
 
     parser.add_argument(
         "--install-path",
-        help="toolchain install path, %s" % os.path.join(Import("env_root"), "program"),
-        default=os.path.join(Import("env_root"), "program"),
+        help="toolchain install path, %s" % os.path.join(Import("env_root"), "tools"),
+        default=os.path.join(Import("env_root"), "tools"),
         dest="install_path",
     )
 

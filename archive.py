@@ -33,6 +33,7 @@ import pkgsdb
 from cmds.cmd_package.cmd_package_utils import is_windows, remove_folder
 from tqdm import tqdm
 
+
 def unpack(archive_filename, package_install_dir, package_info, package_name):
     if archive_filename.endswith(".zip"):
         return handle_zip_package(archive_filename, package_install_dir, package_name, package_info)

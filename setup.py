@@ -1,7 +1,5 @@
 from setuptools import setup, find_packages
 
-    need_windows_curses = ["windows-curses","psutil"]
-
 setup(
     name="env",
     version="0.0.1",
@@ -20,6 +18,7 @@ setup(
         "SCons>=4.0.0",
         "requests",
         "psutil",
+        "tqdm",
         "kconfiglib",
         "windows-curses; platform_system=='Windows'",
     ],
@@ -38,7 +37,7 @@ setup(
     include_package_data=True,
     entry_points={
         "console_scripts": [
-            "env=env.env:main",
+            "rtt=env.env:main",
             "menuconfig=env.env:menuconfig",
             "pkgs=env.env:pkgs",
             "sdk=env.env:sdk",

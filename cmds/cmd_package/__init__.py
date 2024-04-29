@@ -157,9 +157,9 @@ def add_parser(subparsers):
 
     parser.add_argument(
         "--download-path",
-        help="packages download path, %s" % os.path.join(Import("env_root"), "download"),
+        help="packages download path, %s" % os.path.join(Import("env_root"), "local_pkgs"),
         type=str,
-        default=os.path.join(Import("env_root"), "download"),
+        default=os.path.join(Import("env_root"), "local_pkgs"),
         dest="package_download_path",
         metavar="PKG_DOWNLOAD_PATH",
     )

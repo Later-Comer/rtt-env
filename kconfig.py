@@ -26,25 +26,25 @@
 
 def pkgs_path(pkgs, name, path):
     for pkg in pkgs:
-        if 'name' in pkg and pkg['name'] == name:
-            pkg['path'] = path
+        if "name" in pkg and pkg["name"] == name:
+            pkg["path"] = path
             return
 
     pkg = {}
-    pkg['name'] = name
-    pkg['path'] = path
+    pkg["name"] = name
+    pkg["path"] = path
     pkgs.append(pkg)
 
 
 def pkgs_ver(pkgs, name, ver):
     for pkg in pkgs:
-        if 'name' in pkg and pkg['name'] == name:
-            pkg['ver'] = ver
+        if "name" in pkg and pkg["name"] == name:
+            pkg["ver"] = ver
             return
 
     pkg = {}
-    pkg['name'] = name
-    pkg['ver'] = ver
+    pkg["name"] = name
+    pkg["ver"] = ver
     pkgs.append(pkg)
 
 
@@ -55,26 +55,26 @@ def parse(filename):
     try:
         config = open(filename, "r")
     except Exception as e:
-        print('open .config failed')
+        print("open .config failed")
         return ret
 
     for line in config:
-        line = line.lstrip(' ').replace('\n', '').replace('\r', '')
+        line = line.lstrip(" ").replace("\n", "").replace("\r", "")
 
         if len(line) == 0:
             continue
 
-        if line[0] == '#':
+        if line[0] == "#":
             continue
         else:
-            setting = line.split('=', 1)
+            setting = line.split("=", 1)
             if len(setting) >= 2:
-                if setting[0].startswith('CONFIG_PKG_'):
+                if setting[0].startswith("CONFIG_PKG_"):
                     pkg_prefix = setting[0][11:]
-                    if pkg_prefix.startswith('USING_'):
+                    if pkg_prefix.startswith("USING_"):
                         pkg_name = pkg_prefix[6:]
                     else:
-                        if pkg_prefix.endswith('_PATH'):
+                        if pkg_prefix.endswith("_PATH"):
                             pkg_name = pkg_prefix[:-5]
                             pkg_path = setting[1]
                             if pkg_path.startswith('"'):
@@ -83,7 +83,7 @@ def parse(filename):
                                 pkg_path = pkg_path[:-1]
                             pkgs_path(ret, pkg_name, pkg_path)
 
-                        if pkg_prefix.endswith('_VER'):
+                        if pkg_prefix.endswith("_VER"):
                             pkg_name = pkg_prefix[:-4]
                             pkg_ver = setting[1]
                             if pkg_ver.startswith('"'):
@@ -96,5 +96,5 @@ def parse(filename):
     return ret
 
 
-if __name__ == '__main__':
-    parse('sample/.config')
+if __name__ == "__main__":
+    parse("sample/.config")

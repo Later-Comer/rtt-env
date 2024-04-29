@@ -29,9 +29,7 @@ import platform
 
 def package_print_env():
     print("Here are some environmental variables.")
-    print(
-        "If you meet some problems,please check them. Make sure the configuration is correct."
-    )
+    print("If you meet some problems,please check them. Make sure the configuration is correct.")
     print("RTT_EXEC_PATH:%s" % (os.getenv("RTT_EXEC_PATH")))
     print("RTT_CC:%s" % (os.getenv("RTT_CC")))
     print("SCONS:%s" % (os.getenv("SCONS")))
@@ -40,4 +38,4 @@ def package_print_env():
 
 
 def package_print_help():
-    os.system("env pkg -h")
+    os.system("pkgs -h")

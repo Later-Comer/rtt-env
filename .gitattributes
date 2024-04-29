@@ -7,26 +7,26 @@
 
 # Source files
 # ============
-*.pxd    text eol=crlf diff=python
-*.py     text eol=crlf diff=python
-*.py3    text eol=crlf diff=python
-*.pyw    text eol=crlf diff=python
-*.pyx    text eol=crlf diff=python
-*.pyz    text eol=crlf diff=python
-*.pyi    text eol=crlf diff=python
+*.pxd text eol=crlf diff=python
+*.py text eol=crlf diff=python
+*.py3 text eol=crlf diff=python
+*.pyw text eol=crlf diff=python
+*.pyx text eol=crlf diff=python
+*.pyz text eol=crlf diff=python
+*.pyi text eol=crlf diff=python
 
 # Binary files
 # ============
-*.db     binary
-*.p      binary
-*.pkl    binary
+*.db binary
+*.p binary
+*.pkl binary
 *.pickle binary
-*.pyc    binary
-*.pyd    binary
-*.pyo    binary
+*.pyc binary
+*.pyd binary
+*.pyo binary
 
 # MarkDown
-*.md     text eol=crlf
+*.md text eol=crlf
 
-*.bat     text eol=crlf
-*.ps1     text eol=crlf
+*.bat text eol=crlf
+*.ps1 text eol=crlf

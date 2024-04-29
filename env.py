@@ -82,7 +82,7 @@ def get_package_root():
     elif os.getenv("PKGS_ROOT"):
         package_root = os.getenv("PKGS_ROOT")
     else:
-        package_root = os.path.join(get_env_root(), "manifests", "pkg")
+        package_root = os.path.join(get_env_root(), "packages")
     return package_root
 
 
@@ -121,7 +121,7 @@ def export_environment_variable():
     os.environ["PKGS_DIR"] = pkgs_root
     os.environ["BSP_DIR"] = bsp_root
 
-    os.environ['HOSTOS'] = platform.system()
+    os.environ["HOSTOS"] = platform.system()
 
     Export("env_root")
     Export("pkgs_root")

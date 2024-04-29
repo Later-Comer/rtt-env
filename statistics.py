@@ -56,4 +56,4 @@ def Information_statistics(env_config_file):
 
 
 if __name__ == "__main__":
-    Information_statistics(os.path.join(os.getenv("ENV_ROOT"), ".config"))
+    Information_statistics(os.path.join(os.getenv("ENV_ROOT"), "tools/scripts/cmds/", ".config"))

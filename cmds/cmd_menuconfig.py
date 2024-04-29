@@ -299,14 +299,6 @@ def add_parser(subparsers):
     )
 
     parser.add_argument(
-        "--genconfig",
-        help="generate .config by rtonfig.h.",
-        action="store_true",
-        default=False,
-        dest="genconfig",
-    )
-
-    parser.add_argument(
         "--generate",
         "--genheader",
         help="generate rtconfig.h by .config.",
@@ -316,21 +308,20 @@ def add_parser(subparsers):
     )
 
     parser.add_argument(
+        "--genconfig",
+        help="generate .config by rtonfig.h.",
+        action="store_true",
+        default=False,
+        dest="genconfig",
+    )
+
+    parser.add_argument(
         "--silent",
         help="Silent mode,don't display menuconfig window.",
         action="store_true",
         default=False,
         dest="silent",
     )
-
-    # parser.add_argument(
-    #     '-s',
-    #     '--setting',
-    #     help='Env config,auto update packages and create mdk/iar project',
-    #     action='store_true',
-    #     default=False,
-    #     dest='menuconfig_setting',
-    # )
 
     parser.add_argument(
         "--bsp-root",
@@ -359,11 +350,5 @@ def add_parser(subparsers):
         default=os.path.join(Import("env_root"), ".config"),
         dest="env_config_file",
     )
-
-    # parser.add_argument('--easy',
-    #                     help='easy mode, place kconfig everywhere, modify the option env="RTT_ROOT" default "../.."',
-    #                     action='store_true',
-    #                     default=False,
-    #                     dest='menuconfig_easy')
 
     parser.set_defaults(func=cmd)
