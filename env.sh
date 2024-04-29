@@ -1,102 +1,20 @@
 #!/usr/bin/env bash
 
-# 命令行参数
-install=false
-gitee=false
-prefix="$HOME/.env"
-
-function usage() {
-    docs="Usage: \
-\n\tbash $0 [options] \
-\nOptions: \
-\n\t--install: install env, otherwise start env, optional\
-\n\t--prefix=dir: install path, default is ~/.env, optional\
-\n\t--gitee, --china: use china mirror server, optional\
-\n\t-h, --help: display help, optional\
-\nExample: \
-\n\t bash $0 --install --prefix=~/.env  --gitee \
-\n\t bash $0 --gitee"
-
-    echo -e "$docs" >&2
-}
-
-options=$(getopt -o h -l install,prefix:,gitee,china,help -- "$@")
-eval set -- "$options"
-while true; do
-    case "$1" in
-    --install)
-        shift
-        install=true
-        ;;
-    --gitee | --china)
-        shift
-        gitee=true
-        ;;
-    --prefix)
-        shift
-        prefix=$1
-        shift
-        ;;
-    -h | --help)
-        shift
-        usage
-        ;;
-    --)
-        shift
-        break
-        ;;
-    esac
-done
-
 # 根据--gitee选择服务器
-if [ $gitee == "true" ]; then
-    pkg_idx_url="https://gitee.com/RT-Thread-Mirror/packages.git"
-    sdk_idx_url="https://github.com/RT-Thread-Mirror/sdk.git"
+if [ "$1" == "--gitee" ] || [ "$1" == "--china" ]; then
+    rtt_pkg_url="https://gitee.com/RT-Thread-Mirror/packages.git"
+    rtt_sdk_url="https://github.com/RT-Thread-Mirror/sdk.git"
     rtt_env_url="https://gitee.com/RT-Thread-Mirror/env.git"
 else
-    pkg_idx_url="https://github.com/rt-thread/packages.git"
-    sdk_idx_url="https://github.com/rt-thread/sdk.git"
+    rtt_pkg_url="https://github.com/rt-thread/packages.git"
+    rtt_sdk_url="https://github.com/rt-thread/sdk.git"
     rtt_env_url="https://github.com/RT-Thread/env.git"
 fi
 
-# 获取当前脚本路径
+# get script dir
 script_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
-function git_clone_or_pul() {
-    dir=$1
-    url=$2
-    if [ ! -d "$dir/.git" ]; then
-        if [ -d "$dir" ]; then
-            rm -rf "$dir"
-        fi
-        git clone $url $dir
-    else
-        pushd "$dir"
-        git remote set-url origin $url
-        git pull --force
-        popd
-    fi
-}
-
-function create_or_active_venv() {
-    # 创建python venv环境
-    venv_path="$script_dir/.venv"
-    if [ ! -d "$venv_path" ]; then
-        echo "create rt-thread venv in $venv_path"
-        if which python >/dev/null 2>&1; then
-            python -m venv "$venv_path"
-        else
-            python3 -m venv "$venv_path"
-        fi
-        source "$venv_path/bin/activate"
-        pip install "$script_dir/scripts"
-    else
-        echo "activate rt-thread venv in $venv_path"
-        source "$venv_path/bin/activate"
-    fi
-}
-
-function install_toolchain() {
+if [ ! -f "$script_dir/install.lock" ]; then
     echo "install toolchain"
     sudo apt-get update
     sudo apt-get upgrade -y
@@ -105,53 +23,48 @@ function install_toolchain() {
         python3 python3-pip python3-venv \
         gcc gcc-arm-none-eabi binutils-arm-none-eabi gdb-multiarch libncurses5-dev qemu qemu-system-arm \
         -y
-
-}
-
-function check_toolchain() {
-
-    # 判断git是否安装
-    if ! which git >/dev/null 2>&1; then
-        return 0
-    fi
-
-    # 判断python是否安装
-    if which python >/dev/null 2>&1; then
-        return 0
-    elif which python3 >/dev/null 2>&1; then
-        return 0
-    else
-        rturn 1
-    fi
-
-    return 0
-}
-
-# 检查是否安装工具
-if [ $install == "true" ] || [ "$(check_toolchain)" == 1 ]; then
-    install_toolchain
 fi
 
-# 检查python虚拟环境
-create_or_active_venv
+# create or activate venv
+venv_path="$script_dir/.venv"
+if [ ! -d "$venv_path" ]; then
+    echo "create rt-thread venv in $venv_path"
+    if which python >/dev/null 2>&1; then
+        python -m venv "$venv_path"
+    else
+        python3 -m venv "$venv_path"
+    fi
+    source "$venv_path/bin/activate"
+    pip install "git+$rtt_env_url"
+else
+    echo "activate rt-thread venv in $venv_path"
+    source "$venv_path/bin/activate"
+fi
 
-# 检查pkg仓库
+# clone rtt-pkg
 pkg_idx_dir="$script_dir/manifests/packages"
-git_clone_or_pull "$pkg_idx_dir" "$pkg_idx_url"
+if [ ! -d "$pkg_idx_dir/.git" ]; then
+    git clone "$rtt_pkg_url" "$pkg_idx_dir"
+fi
 
-# 检查sdk仓库
-sdk_idx_dir="$script_dir/manifests/toolchain"
-git_clone_or_pull "$sdk_idx_dir" "$sdk_idx_url"
+# clone rtt-sdk
+sdk_idx_dir="$script_dir/manifests/sdk"
+if [ ! -d "$sdk_idx_dir/.git"]; then
+    git clone "$rtt_sdk_url" "$sdk_idx_dir"
+fi
 
-# 检查env仓库
-rtt_env_dir="$script_dir/scripts"
-git_clone_or_pull "$rtt_env_dir" "$rtt_env_url"
+# env
+export ENV_ROOT="$script_dir"
+export ENV_SETTING_PATH="$script_dir/setting"
+export ENV_DOWNLOAD_PATH="$script_dir/downlaod"
+export ENV_PROGRAM_PATH="$script_dir/program"
+export ENV_MANIFESTS_PATH="$script_dir/manifests"
+# pkgs
+export PKGS_ROOT="$script_dir/manifests"
+export PKGS_DIR="$script_dir/manifests"
+# sdk
+export SDK_INDEX_ROOT="$script_dir/manifests/sdk"
 
-# export ENV_ROOT="$script_dir"
-# export PKGS_ROOT="$script_dir/manifests"
-# export PKGS_DIR="$script_dirmanifests"
-# export PATH=~/.env/tools/scripts:$PATH
-
-# echo "`git --version` in `which git`"
-# echo "`python --version` in `which python3`"
-# echo "`scons --version`"
+echo "$(git --version) in $(which git)"
+echo "$(python --version) in $(which python3)"
+echo "$(scons --version)"
