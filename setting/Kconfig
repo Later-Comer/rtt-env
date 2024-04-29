@@ -1,4 +1,5 @@
-menu "Env config"
+
+menu "RT-Thread Env config"
 
 config SYS_AUTO_UPDATE_PKGS
     bool "Auto update pkgs config"
@@ -58,3 +59,4 @@ config SYS_PKGS_USING_STATISTICS
 
 endmenu
 
+orsource "manifests/toolchain/$HOSTOS/Kconfig"
