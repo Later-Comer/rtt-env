@@ -109,12 +109,27 @@ def get_bsp_root():
     return bsp_root
 
 
+def get_env_config_path():
+    if os.getenv("ENV_SETTING_PATH"):
+        return os.getenv("ENV_SETTING_PATH")
+    elif os.path.isdir(os.path.join(get_env_root(), "setting")):
+        return os.path.join(get_env_root(), "setting")
+    else:
+        return os.path.join(get_env_root(), "tools", "scripts", "cmds")
+
+
+def get_env_config_file():
+    return os.path.join(get_env_config_path, ".config")
+
+
 def export_environment_variable():
     script_root = os.path.split(os.path.realpath(__file__))[0]
     sys.path = sys.path + [os.path.join(script_root)]
     env_root = get_env_root()
     pkgs_root = get_package_root()
     bsp_root = get_bsp_root()
+    env_config_path = get_env_config_path()
+    env_config_file = get_env_config_file()
 
     os.environ["ENV_ROOT"] = env_root
     os.environ["PKGS_ROOT"] = pkgs_root
@@ -126,6 +141,8 @@ def export_environment_variable():
     Export("env_root")
     Export("pkgs_root")
     Export("bsp_root")
+    Export("env_config_path")
+    Export("env_config_file")
 
 
 def exec_arg(arg):

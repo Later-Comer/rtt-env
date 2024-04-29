@@ -50,16 +50,16 @@ def config_system_setting():
 
     # change to sdk root directory
     beforepath = os.getcwd()
-    os.chdir(Import("env_root"))
+    os.chdir(Import("env_config_path"))
 
     # start menuconfig
     sys.argv = ["menuconfig", "Kconfig"]
     menuconfig._main()
 
     # update package
-    toolchain_index_path = os.path.join(Import("env_root"), "manifests", "toolchain")
-    toolchain_install_path = os.path.join(Import("env_root"), "program")
-    os.system("pkgs --update --index-path=%s --install-path=%s" % (toolchain_index_path, toolchain_install_path))
+    # toolchain_index_path = os.path.join(Import("env_root"), "manifests", "toolchain")
+    # toolchain_install_path = os.path.join(Import("env_root"), "program")
+    # os.system("pkgs --update --index-path=%s --install-path=%s" % (toolchain_index_path, toolchain_install_path))
 
     # restore the old directory
     os.chdir(beforepath)
@@ -98,8 +98,6 @@ def cmd(args):
         config_system_setting()
     elif args.update_python_modules:
         update_python_modules()
-    elif args.update_env_script:
-        update_env_script()
     else:
         os.system("system -h")
 
@@ -121,14 +119,6 @@ def add_parser(subparsers):
         dest="setting",
     )
 
-    # parser.add_argument(
-    #     "--update-all",
-    #     help="update system menuconfig's online package options ",
-    #     action="store_true",
-    #     default=False,
-    #     dest="system_update",
-    # )
-
     parser.add_argument(
         "--update-python",
         help="update python modules, e.g. requests module",
@@ -137,28 +127,20 @@ def add_parser(subparsers):
         dest="update_python_modules",
     )
 
-    parser.add_argument(
-        "--update-env-script",
-        help="update env script",
-        action="store_true",
-        default=False,
-        dest="update_env_script",
-    )
+    # parser.add_argument(
+    #     "--update-packages-index",
+    #     help="update packages index",
+    #     action="store_true",
+    #     default=False,
+    #     dest="update_pkg_index",
+    # )
 
-    parser.add_argument(
-        "--update-packages-index",
-        help="update packages index",
-        action="store_true",
-        default=False,
-        dest="update_pkg_index",
-    )
-
-    parser.add_argument(
-        "--update-toolchain-index",
-        help="update toolchain index",
-        action="store_true",
-        default=False,
-        dest="update_sdk_index",
-    )
+    # parser.add_argument(
+    #     "--update-toolchain-index",
+    #     help="update toolchain index",
+    #     action="store_true",
+    #     default=False,
+    #     dest="update_sdk_index",
+    # )
 
     parser.set_defaults(func=cmd)

@@ -338,16 +338,9 @@ def add_parser(subparsers):
     )
 
     parser.add_argument(
-        "--env-root",
-        help="env root, %s" % Import("env_root"),
-        default=Import("env_root"),
-        dest="env_root",
-    )
-
-    parser.add_argument(
         "--env-config-file",
-        help="env config file, %s" % os.path.join(Import("env_root"), ".config"),
-        default=os.path.join(Import("env_root"), ".config"),
+        help="env config file, %s" % Import("env_config_file"),
+        default=Import("env_config_file"),
         dest="env_config_file",
     )
 

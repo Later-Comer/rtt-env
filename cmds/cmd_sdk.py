@@ -40,7 +40,7 @@ def cmd(args):
 
     # change to sdk root directory
     beforepath = os.getcwd()
-    os.chdir(args.env_root)
+    os.chdir(args.kconfig_path)
 
     # start menuconfig
     sys.argv = ["menuconfig", "Kconfig"]
@@ -53,6 +53,20 @@ def cmd(args):
     os.chdir(beforepath)
 
 
+def get_sdk_install_path():
+    if os.getenv("SDK_INSTALL_PATH"):
+        return os.getenv("SDK_INSTALL_PATH")
+    else:
+        return os.path.join(Import("env_root", "tools"))
+
+
+def get_sdk_index_path():
+    if os.getenv("SDK_INDEX_PATH"):
+        return os.getenv("SDK_INDEX_PATH")
+    else:
+        return os.path.join(Import("env_root"), "packages")
+
+
 def add_parser(subparsers):
     parser = subparsers.add_parser(
         "sdk",
@@ -61,24 +75,24 @@ def add_parser(subparsers):
     )
 
     parser.add_argument(
-        "--env-root",
-        help="env root, %s" % Import("env_root"),
-        default=Import("env_root"),
-        dest="env_root",
-    )
-
-    parser.add_argument(
-        "--index-path",
-        help="toolchain index path, %s" % os.path.join(Import("env_root"), "packages", "sdk"),
-        default=os.path.join(Import("env_root"), "packages", "sdk"),
-        dest="index_path",
+        "--start-path",
+        help="toolchain Kconfig path, %s" % get_sdk_install_path(),
+        default=get_sdk_install_path(),
+        dest="kconfig_path",
     )
 
     parser.add_argument(
         "--install-path",
-        help="toolchain install path, %s" % os.path.join(Import("env_root"), "tools"),
-        default=os.path.join(Import("env_root"), "tools"),
+        help="toolchain install path, %s" % get_sdk_install_path(),
+        default=get_sdk_install_path(),
         dest="install_path",
+    )
+
+    parser.add_argument(
+        "--index-path",
+        help="toolchain index path, %s" % get_sdk_index_path(),
+        default=get_sdk_index_path(),
+        dest="index_path",
     )
 
     parser.set_defaults(func=cmd)

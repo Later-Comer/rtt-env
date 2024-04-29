@@ -56,6 +56,13 @@ def run_env_cmd(args):
         package_print_help()
 
 
+def get_download_path():
+    if os.getenv("ENV_DOWNLOAD_PATH"):
+        return os.getenv("ENV_DOWNLOAD_PATH")
+    else:
+        return os.path.join(Import("env_root"), "local_pkgs")
+
+
 def add_parser(subparsers):
     """The packages command parser for env."""
 
@@ -157,18 +164,18 @@ def add_parser(subparsers):
 
     parser.add_argument(
         "--download-path",
-        help="packages download path, %s" % os.path.join(Import("env_root"), "local_pkgs"),
+        help="packages download path, %s" % get_download_path(),
         type=str,
-        default=os.path.join(Import("env_root"), "local_pkgs"),
+        default=get_download_path(),
         dest="package_download_path",
         metavar="PKG_DOWNLOAD_PATH",
     )
 
     parser.add_argument(
         "--env-config-file",
-        help="env config file, %s" % os.path.join(Import("env_root"), ".config"),
+        help="env config file, %s" % Import("env_config_file"),
         type=str,
-        default=os.path.join(Import("env_root"), ".config"),
+        default=Import("env_config_file"),
         dest="env_config_file",
         metavar="ENV_CONFIG_FILE",
     )
