@@ -54,8 +54,8 @@ def cmd(args):
 
 
 def get_sdk_install_path():
-    if os.getenv("SDK_INSTALL_ROOT"):
-        return os.getenv("SDK_INSTALL_ROOT")
+    if os.getenv("ENV_PROGRAM_PATH"):
+        return os.getenv("ENV_PROGRAM_PATH")
     elif os.path.isdir(os.path.join(Import("env_root"), "program")):
         return os.path.join(Import("env_root"), "program")
     else:
