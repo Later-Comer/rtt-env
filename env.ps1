@@ -16,19 +16,6 @@ if ($tz.BaseUtcOffset.TotalHours -eq 8) {
     $env_url = "https://github.com/rt-thread/env.git"
 }
 
-$setting = @{
-    pkg_index_path   = "manifests/packages";
-    sdk_index_path   = "manifests/sdk";
-    sdk_install_path = "program";
-    env              = {
-        PKGS_DIR="$PSScriptRoot/manifests";
-        PKGS_ROOT="$PSScriptRoot/manifests";
-        ENV_ROOT="$PSScriptRoot";
-    }
-}
-
-$setting | ConvertTo-Json | Out-File "$PSScriptRoot\setting.json"
-
 function Test-Command([string] $cmd) {
     ($null -ne (Get-Command $cmd -ErrorAction SilentlyContinue))
 }
@@ -62,15 +49,24 @@ if (-not (Test-Path -Path $VENV_ROOT)) {
 
 # clone rtt-pkg
 if (-not (Test-Path -Path "$PSScriptRoot\manifests\packages\.git")) {
-    git clone $pkg_url $PSScriptRoot\manifests\packages
+    git clone $pkg_url "$PSScriptRoot\manifests\packages"
 }
 
 # clone rtt-sdk
-if (-not (Test-Path -Path "$PSScriptRoot\manifests\toolchain\.git")) {
-    git clone $sdk_url $PSScriptRoot\manifests\toolchain
+if (-not (Test-Path -Path "$PSScriptRoot\manifests\sdk\.git")) {
+    git clone "$sdk_url $PSScriptRoot\manifests\sdk"
 }
 
+# env相关路径
 $env:ENV_ROOT = "$PSScriptRoot"
+$env:ENV_SETTING_DIR = "$PSScriptRoot\setting"
+$env:ENV_DOWNLOAD_DIR = "$PSScriptRoot\downlaod"
+# pkgs相关路径
 $env:PKGS_ROOT = "$PSScriptRoot\manifests"
 $env:PKGS_DIR = "$PSScriptRoot\manifests"
+# sdk相关路径
+$env:SDK_INDEX_ROOT = "$PSScriptRoot\manifests\sdk"
+$env:SDK_INSTALL_ROOT = "$PSScriptRoot\program"
+
+
 $env:pathext = ".ps1; $env:pathext"
