@@ -4,9 +4,9 @@ if ($tz.BaseUtcOffset.TotalHours -eq 8) {
     $python_amd64_url = "https://registry.npmmirror.com/-/binary/python/3.12.3/python-3.12.3-amd64.exe"
     $git_for_windows_url = "https://registry.npmmirror.com/-/binary/git-for-windows/v2.44.0.windows.1/MinGit-2.44.0-64-bit.zip"
 
-    $pkg_url = "https://github.com/rt-thread/packages.git"
-    $sdk_url = "https://github.com/rt-thread/sdk.git"
-    $env_url = "https://gitee.com/latercomer/rtt-env.git"
+    $pkg_url = "https://gitee.com/RT-Thread-Mirror/packages.git"
+    $sdk_url = "https://github.com/RT-Thread-Mirror/sdk.git"
+    $env_url = "https://gitee.com/RT-Thread-Mirror/env.git"
 } else {
     $python_amd64_url = "https://www.python.org/ftp/python/3.12.3/python-3.12.3-amd64.exe"
     $git_for_windows_url = "https://registry.npmmirror.com/-/binary/git-for-windows/v2.44.0.windows.1/MinGit-2.44.0-64-bit.zip"
