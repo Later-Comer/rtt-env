@@ -1,3 +1,20 @@
+[project]
+name ="env"
+version="0.0.1"
+dependencies = [
+    "requests",
+    'importlib-metadata; python_version<"3.10"',
+]
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[tools.setuptools]
+# directory containing all the packages
+package-dir = {"" = "src"}
+
+
 [tool.black]
 line-length = 128
 skip-string-normalization = true

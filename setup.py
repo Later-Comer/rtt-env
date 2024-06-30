@@ -22,16 +22,8 @@ setup(
         'kconfiglib',
         'windows-curses; platform_system=="Windows"',
     ],
-    packages=[
-        'env',
-        'env.cmds',
-        'env.cmds.cmd_package',
-    ],
-    package_dir={
-        'env': '.',
-        'env.cmds': 'cmds',
-        'env.cmds.cmd_package': 'cmds/cmd_package',
-    },
+    packages=find_packages(where='src'),
+    package_dir={'': 'src'},
     package_data={'': ['*.*']},
     exclude_package_data={'': ['MANIFEST.in']},
     include_package_data=True,
