@@ -1,8 +1,8 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='env',
-    version='0.0.1',
+    name='rtenv',
+    version='0.0.2',
     description='RT-Thread Env',
     url='https://github.com/RT-Thread/env.git',
     author='RT-Thread Development Team',
@@ -24,16 +24,16 @@ setup(
     ],
     packages=find_packages(where='src'),
     package_dir={'': 'src'},
-    package_data={'': ['*.*']},
-    exclude_package_data={'': ['MANIFEST.in']},
-    include_package_data=True,
+    # package_data={'': ['*.*']},
+    # exclude_package_data={'': ['MANIFEST.in']},
+    # include_package_data=True,
     entry_points={
         'console_scripts': [
-            'rt-env=env.env:main',
-            'menuconfig=env.env:menuconfig',
-            'pkgs=env.env:pkgs',
-            'sdk=env.env:sdk',
-            'system=env.env:system',
+            'rt-env=rtenv.env:main',
+            'menuconfig=rtenv.env:menuconfig',
+            'pkgs=rtenv.env:pkgs',
+            'sdk=rtenv.env:sdk',
+            'system=rtenv.env:system',
         ]
     },
 )
